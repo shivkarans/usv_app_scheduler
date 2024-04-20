@@ -20,7 +20,7 @@ HUB_ADDRESS = http://localhost:9515/wd/hub
 [NOTIFICATION]
 ; Get email notifications via https://sendgrid.com/ (optional)
 SENDGRID_API_KEY = 
-; Get push notifications via PERSONAL WEBSITE http://yoursite.com (Optional)
+SENDGRID_EMAIL_SENDER = 
 
 [TIME]
 ; Time between retries/checks for available dates (seconds)

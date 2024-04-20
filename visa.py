@@ -39,6 +39,8 @@ REGEX_CONTINUE = Embassies[YOUR_EMBASSY][2]
 # Notification:
 # Get email notifications via https://sendgrid.com/ (Optional)
 SENDGRID_API_KEY = config['NOTIFICATION']['SENDGRID_API_KEY']
+SENDGRID_EMAIL_SENDER = config['NOTIFICATION']['SENDGRID_EMAIL_SENDER']
+
 # Get push notifications via PERSONAL WEBSITE http://yoursite.com (Optional)
 
 # Time Section:
@@ -82,7 +84,7 @@ else:
 def send_notification(title, msg):
     print(f"Sending notification!")
     if SENDGRID_API_KEY:
-        message = Mail(from_email=USERNAME, to_emails=USERNAME, subject=msg, html_content=msg)
+        message = Mail(from_email=SENDGRID_EMAIL_SENDER, to_emails=USERNAME, subject=title, html_content=msg)
         try:
             sg = SendGridAPIClient(SENDGRID_API_KEY)
             response = sg.send(message)
