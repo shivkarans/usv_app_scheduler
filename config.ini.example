@@ -8,8 +8,8 @@ SCHEDULE_ID = 99999999
 ; Target Period:
 PRIOD_START = 2023-03-20
 PRIOD_END = 2023-06-01
-; Change "en-am-yer", based on your embassy Abbreviation in embassy.py list.
-YOUR_EMBASSY = en-am-yer
+; Change "en-ca", based on your embassy Abbreviation in embassy.py list.
+YOUR_EMBASSY = en-ca
 
 [CHROMEDRIVER]
 ; Details for the script to control Chrome
@@ -18,21 +18,13 @@ LOCAL_USE = True
 HUB_ADDRESS = http://localhost:9515/wd/hub
 
 [NOTIFICATION]
-; Get push notifications via https://pushover.net/ (optional)
-PUSHOVER_TOKEN = 
-PUSHOVER_USER = 
 ; Get email notifications via https://sendgrid.com/ (optional)
 SENDGRID_API_KEY = 
 ; Get push notifications via PERSONAL WEBSITE http://yoursite.com (Optional)
-PERSONAL_SITE_USER = *********
-PERSONAL_SITE_PASS = *********
-PUSH_TARGET_EMAIL = notifyemail@gmail.com
-PERSONAL_PUSHER_URL = https://yoursite.com/api/esender.php
 
 [TIME]
 ; Time between retries/checks for available dates (seconds)
-RETRY_TIME_L_BOUND = 10
-RETRY_TIME_U_BOUND = 120
+RETRY_TIME = 60
 ; Cooling down after WORK_LIMIT_TIME hours of work (Avoiding Ban)(hours)
 WORK_LIMIT_TIME = 1.5
 WORK_COOLDOWN_TIME = 2.25

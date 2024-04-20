@@ -1,16 +1,16 @@
 import time
 import json
-import random
 import requests
 import configparser
 from datetime import datetime
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -39,14 +39,7 @@ REGEX_CONTINUE = Embassies[YOUR_EMBASSY][2]
 # Notification:
 # Get email notifications via https://sendgrid.com/ (Optional)
 SENDGRID_API_KEY = config['NOTIFICATION']['SENDGRID_API_KEY']
-# Get push notifications via https://pushover.net/ (Optional)
-PUSHOVER_TOKEN = config['NOTIFICATION']['PUSHOVER_TOKEN']
-PUSHOVER_USER = config['NOTIFICATION']['PUSHOVER_USER']
 # Get push notifications via PERSONAL WEBSITE http://yoursite.com (Optional)
-PERSONAL_SITE_USER = config['NOTIFICATION']['PERSONAL_SITE_USER']
-PERSONAL_SITE_PASS = config['NOTIFICATION']['PERSONAL_SITE_PASS']
-PUSH_TARGET_EMAIL = config['NOTIFICATION']['PUSH_TARGET_EMAIL']
-PERSONAL_PUSHER_URL = config['NOTIFICATION']['PERSONAL_PUSHER_URL']
 
 # Time Section:
 minute = 60
@@ -54,8 +47,7 @@ hour = 60 * minute
 # Time between steps (interactions with forms)
 STEP_TIME = 0.5
 # Time between retries/checks for available dates (seconds)
-RETRY_TIME_L_BOUND = config['TIME'].getfloat('RETRY_TIME_L_BOUND')
-RETRY_TIME_U_BOUND = config['TIME'].getfloat('RETRY_TIME_U_BOUND')
+RETRY_TIME = config['TIME'].getfloat('RETRY_TIME')
 # Cooling down after WORK_LIMIT_TIME hours of work (Avoiding Ban)
 WORK_LIMIT_TIME = config['TIME'].getfloat('WORK_LIMIT_TIME')
 WORK_COOLDOWN_TIME = config['TIME'].getfloat('WORK_COOLDOWN_TIME')
@@ -82,6 +74,11 @@ JS_SCRIPT = ("var req = new XMLHttpRequest();"
              "req.send(null);"
              "return req.responseText;")
 
+if LOCAL_USE:
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+else:
+    driver = webdriver.Remote(command_executor=HUB_ADDRESS, options=webdriver.ChromeOptions())
+
 def send_notification(title, msg):
     print(f"Sending notification!")
     if SENDGRID_API_KEY:
@@ -94,24 +91,7 @@ def send_notification(title, msg):
             print(response.headers)
         except Exception as e:
             print(e.message)
-    if PUSHOVER_TOKEN:
-        url = "https://api.pushover.net/1/messages.json"
-        data = {
-            "token": PUSHOVER_TOKEN,
-            "user": PUSHOVER_USER,
-            "message": msg
-        }
-        requests.post(url, data)
-    if PERSONAL_SITE_USER:
-        url = PERSONAL_PUSHER_URL
-        data = {
-            "title": "VISA - " + str(title),
-            "user": PERSONAL_SITE_USER,
-            "pass": PERSONAL_SITE_PASS,
-            "email": PUSH_TARGET_EMAIL,
-            "msg": msg,
-        }
-        requests.post(url, data)
+
 
 
 def auto_action(label, find_by, el_type, action, value, sleep_time=0):
@@ -229,12 +209,6 @@ def info_logger(file_path, log):
         file.write(str(datetime.now().time()) + ":\n" + log + "\n")
 
 
-if LOCAL_USE:
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-else:
-    driver = webdriver.Remote(command_executor=HUB_ADDRESS, options=webdriver.ChromeOptions())
-
-
 if __name__ == "__main__":
     first_loop = True
     while 1:
@@ -273,7 +247,7 @@ if __name__ == "__main__":
                     # A good date to schedule for
                     END_MSG_TITLE, msg = reschedule(date)
                     break
-                RETRY_WAIT_TIME = random.randint(RETRY_TIME_L_BOUND, RETRY_TIME_U_BOUND)
+                RETRY_WAIT_TIME = RETRY_TIME
                 t1 = time.time()
                 total_time = t1 - t0
                 msg = "\nWorking Time:  ~ {:.2f} minutes".format(total_time/minute)
