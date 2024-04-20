@@ -247,6 +247,7 @@ if __name__ == "__main__":
                 date = get_available_date(dates)
                 if date:
                     # A good date to schedule for
+                    send_notification("Rescheduling Started", date)
                     END_MSG_TITLE, msg = reschedule(date)
                     break
                 RETRY_WAIT_TIME = RETRY_TIME
