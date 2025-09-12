@@ -81,17 +81,10 @@ JS_SCRIPT = ("var req = new XMLHttpRequest();"
 driver = None
 
 def send_notification(title, msg):
-    print(f"Sending notification!")
-    if SENDGRID_API_KEY:
-        message = Mail(from_email=SENDGRID_EMAIL_SENDER, to_emails=USERNAME, subject=title, html_content=msg)
-        try:
-            sg = SendGridAPIClient(SENDGRID_API_KEY)
-            response = sg.send(message)
-            print(response.status_code)
-            print(response.body)
-            print(response.headers)
-        except Exception as e:
-            print(e.message)
+    print(f"📧 NOTIFICATION: {title}")
+    print(f"📝 Message: {msg}")
+    # TODO: Configure SendGrid later if needed
+    pass
 
 
 
